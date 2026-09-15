@@ -1,0 +1,125 @@
+import java.io.*;
+import java.util.*;
+
+public class Solution {
+
+    static int[] manacherOdd(String s) {
+        int n = s.length();
+        int[] d1 = new int[n];
+
+        int l = 0, r = -1;
+
+        for (int i = 0; i < n; i++) {
+            int k = (i > r) ? 1 : Math.min(d1[l + r - i], r - i + 1);
+
+            while (i - k >= 0 && i + k < n &&
+                   s.charAt(i - k) == s.charAt(i + k)) {
+                k++;
+            }
+
+            d1[i] = k--;
+
+            if (i + k > r) {
+                l = i - k;
+                r = i + k;
+            }
+        }
+
+        return d1;
+    }
+
+    static int[] manacherEven(String s) {
+        int n = s.length();
+        int[] d2 = new int[n];
+
+        int l = 0, r = -1;
+
+        for (int i = 0; i < n; i++) {
+            int k = (i > r) ? 0 : Math.min(d2[l + r - i + 1], r - i + 1);
+
+            while (i - k - 1 >= 0 && i + k < n &&
+                   s.charAt(i - k - 1) == s.charAt(i + k)) {
+                k++;
+            }
+
+            d2[i] = k--;
+
+            if (i + k > r) {
+                l = i - k - 1;
+                r = i + k;
+            }
+        }
+
+        return d2;
+    }
+
+    public static void main(String[] args) throws Exception {
+
+        BufferedReader br =
+                new BufferedReader(new InputStreamReader(System.in));
+
+        int n = Integer.parseInt(br.readLine().trim());
+        String s = br.readLine().trim();
+
+        String doubled = s + s;
+
+        int[] odd = manacherOdd(doubled);
+        int[] even = manacherEven(doubled);
+
+        int[] answer = new int[n];
+
+        /*
+         * For every possible starting position of a rotation,
+         * find palindromes that fit inside n characters.
+         */
+
+        for (int center = 0; center < 2 * n; center++) {
+
+            // Odd-length palindrome
+            int radius = odd[center];
+
+            int left = center - radius + 1;
+            int right = center + radius - 1;
+
+            // Limit palindrome length to n
+            int maxRadius = Math.min(radius, (n + 1) / 2);
+
+            for (int k = 1; k <= maxRadius; k++) {
+                int start = center - k + 1;
+
+                if (start >= 0 && start < n) {
+                    int length = 2 * k - 1;
+
+                    if (length > answer[start]) {
+                        answer[start] = length;
+                    }
+                }
+            }
+
+            // Even-length palindrome
+            radius = even[center];
+
+            int maxEven = Math.min(radius, n / 2);
+
+            for (int k = 1; k <= maxEven; k++) {
+                int start = center - k;
+
+                if (start >= 0 && start < n) {
+                    int length = 2 * k;
+
+                    if (length > answer[start]) {
+                        answer[start] = length;
+                    }
+                }
+            }
+        }
+
+        StringBuilder out = new StringBuilder();
+
+        for (int i = 0; i < n; i++) {
+            out.append(answer[i]).append('\n');
+        }
+
+        System.out.print(out);
+    }
+}
