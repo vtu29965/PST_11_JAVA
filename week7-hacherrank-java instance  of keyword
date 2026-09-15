@@ -1,0 +1,17 @@
+Program :
+public static void count(ArrayList myList) {
+    int studentCount = 0;
+    int rockstarCount = 0;
+    int hackerCount = 0;
+
+    for (Object obj : myList) {
+        if (obj instanceof Student)
+            studentCount++;
+        if (obj instanceof Rockstar)
+            rockstarCount++;
+        if (obj instanceof Hacker)
+            hackerCount++;
+    }
+
+    System.out.println(studentCount + " " + rockstarCount + " " + hackerCount);
+}
